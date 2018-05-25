@@ -1,0 +1,24 @@
+{
+  "name": "Museum",
+  "version": "1.0.0",
+  "description": "Museum using Three.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+"
+  },
+  "author": "Sam Matthews <sammatthews6@outlook.com> ()",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  }
+}
