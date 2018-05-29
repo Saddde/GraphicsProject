@@ -1,24 +1,5 @@
+		var popup = [];
 	var mus = { //"mus" for MUSeum used as a "main" variable of sorts.
-		/*
-		mus.scene;
-		mus.camera;
-		mus.renderer;
-		mus.raycaster;
-		mus.mouse;
-		mus.raycastSetUp;
-		mus.boot;
-			mus.scene.fog;
-			mus.controls;
-			mus.canvas;
-		mus.pointerControls;
-			mus.changeCallback;
-			mus.errorCallback;
-			mus.moveCallback;
-			mus.toggleFullScreen;
-		mus.movement;
-		mus.create;
-		mus.render;
-		*/
 		scene: new THREE.Scene(),
 		camera: new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000),
 		renderer: new THREE.WebGLRenderer({antialias: false}),
@@ -39,10 +20,6 @@
             } );
 
             gui.open();
-        },
-
-        refreshFog : function() {
-            mus.scene.fog.density = viewDist2;
         },
 
 		raycastSetUp: function() {
@@ -190,38 +167,10 @@
 			}
 		},
 
-		errorCallback: function(event) {
-			alert("Pointer Lock Failed");
-		},
-
 		moveCallback: function(event) {
 			//now that pointer disabled, we get the movement in x and y pos of the mouse
 			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-		},
-
-		toggleFullscreen: function() {
-			if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
-				if (document.documentElement.requestFullscreen) {
-					document.documentElement.requestFullscreen();
-				} else if (document.documentElement.msRequestFullscreen) {
-					document.documentElement.msRequestFullscreen();
-				} else if (document.documentElement.mozRequestFullScreen) {
-					document.documentElement.mozRequestFullScreen();
-				} else if (document.documentElement.webkitRequestFullscreen) {
-					document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-				}
-			} else {
-				if (document.exitFullscreen) {
-					document.exitFullscreen();
-				} else if (document.msExitFullscreen) {
-					document.msExitFullscreen();
-				} else if (document.mozCancelFullScreen) {
-					document.mozCancelFullScreen();
-				} else if (document.webkitExitFullscreen) {
-					document.webkitExitFullscreen();
-				}
-			}
 		},
 
 		movement: function() {
@@ -261,12 +210,23 @@
 					}
 				});
 		},
-
+		
+		click: function(){
+			
+		},
+		
 		create: function() {
 
 			//let there be light!
-			mus.worldLight = new THREE.AmbientLight(0xffffff);
+			mus.worldLight = new THREE.DirectionalLight(0xffffff, 1.0);
+			mus.worldLight.position.set(5, 0, -5).normalize();
+			mus.worldLight2 = new THREE.DirectionalLight(new THREE.Color('hsl(30, 100%, 75%)'), 1);
+			mus.worldLight3 = new THREE.DirectionalLight(new THREE.Color('hsl(240, 100%, 75%)'), 0.75);
+			mus.worldLight4 = new THREE.AmbientLight(0xffff00, 0.1);
 			mus.scene.add(mus.worldLight);
+			mus.scene.add(mus.worldLight2);
+			mus.scene.add(mus.worldLight3);
+			mus.scene.add(mus.worldLight4);
 
             //set the floor up
             mus.floorText = THREE.ImageUtils.loadTexture("img/Textures/Floor.jpg");
@@ -276,7 +236,7 @@
 
             //Phong is for shiny surfaces
 			mus.floorMaterial = new THREE.MeshPhongMaterial( {map: mus.floorText } );
-			mus.floor = new THREE.Mesh(new THREE.PlaneGeometry(45,45), mus.floorMaterial);
+			mus.floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), mus.floorMaterial);
 
 			mus.floor.rotation.x = Math.PI/2;
             mus.floor.rotation.y = Math.PI;
@@ -286,10 +246,10 @@
 			mus.wallGroup = new THREE.Group();
 			mus.scene.add(mus.wallGroup);
 
-			mus.wall1 = new THREE.Mesh(new THREE.BoxGeometry(40,6, 0.001), new THREE.MeshLambertMaterial({color: 0xff0000}));
-			mus.wall2 = new THREE.Mesh(new THREE.BoxGeometry(40,6, 0.001), new THREE.MeshLambertMaterial({color: 0x0400ff}));
-			mus.wall3 = new THREE.Mesh(new THREE.BoxGeometry(40,6, 0.001), new THREE.MeshLambertMaterial({color: 0x20d600}));
-			mus.wall4 = new THREE.Mesh(new THREE.BoxGeometry(40,6, 0.001), new THREE.MeshLambertMaterial({color: 0xd68300}));
+			mus.wall1 = new THREE.Mesh(new THREE.BoxGeometry(20,6, 0.001), new THREE.MeshLambertMaterial({color: 0xff0000}));
+			mus.wall2 = new THREE.Mesh(new THREE.BoxGeometry(20,6, 0.001), new THREE.MeshLambertMaterial({color: 0x0400ff}));
+			mus.wall3 = new THREE.Mesh(new THREE.BoxGeometry(20,6, 0.001), new THREE.MeshLambertMaterial({color: 0x20d600}));
+			mus.wall4 = new THREE.Mesh(new THREE.BoxGeometry(20,6, 0.001), new THREE.MeshLambertMaterial({color: 0xd68300}));
 
 			mus.wallGroup.add(mus.wall1, mus.wall2, mus.wall3, mus.wall4);
 			mus.wallGroup.position.y = 3;
@@ -308,16 +268,13 @@
             }
 
 			//Ceiling//
-			//mus.ceilMaterial = new THREE.MeshLambertMaterial({color: 0x8DB8A7});
 			mus.ceilMaterial = new THREE.MeshLambertMaterial({color: 0x8DB8A7});
-			mus.ceil = new THREE.Mesh(new THREE.PlaneGeometry(40,6), mus.ceilMaterial);
+			mus.ceil = new THREE.Mesh(new THREE.PlaneGeometry(20,20), mus.ceilMaterial);
 			mus.ceil.position.y = 6;
 			mus.ceil.rotation.x = Math.PI/2;
-
 			mus.scene.add(mus.ceil);
 
-            ///////Add 3D imported Objects ////
-            /*
+            /*///////Add 3D imported Objects ////
             mus.objects = [];
             //OBJ to JSON converter Python Tool
             //three.js/utils/converters/obj/convert_obj_three.py
@@ -332,24 +289,115 @@
                 mus.scene.add(mus.ico);
                 mus.objects.push(mus.ico);
             });
-            */
-            /* Process for importing more objects is pretty straight forward
+            
+            //Process for importing more objects is pretty straight forward
             mus.loader.load(".\\objects\\icosphere.json", function(geometry, materials) {
                 var materialIco = new THREE.MeshNormalMaterial();
                 mus.ico2 = new THREE.Mesh(geometry, materialIco);
                 mus.ico2.position.x = 1;
                 mus.scene.add(mus.ico2);
-            });
-            */
+            });*/
+			
+			//Adding local obj models
+			mus.objects = [];
+			var loader1 = new THREE.OBJLoader();
+			var loader2 = new THREE.OBJLoader();
+			var loader3 = new THREE.OBJLoader();
+			var loader4 = new THREE.OBJLoader();
+			var loader5 = new THREE.OBJLoader();
+			var loader6 = new THREE.OBJLoader();
+			var material = new THREE.MeshBasicMaterial({color : 0x00ff00});
+			// load a resource
+			
+			
+			loader1.load(
+				'models/1.obj', //Banana
+				function ( object ) {
+					var mesh = object;
+					mus.scene.add( mesh );
+					mesh.scale.set(0.005,0.005,0.005);
+					mesh.position.set(-7, 0, 7);
+					mus.objects.push(mesh);
+				},
+			);
+			var mtlLoader2 = new THREE.MTLLoader();
+			mtlLoader2.setTexturePath('models/Baymax/');
+			mtlLoader2.setPath('models/Baymax/');
+			mtlLoader2.load('2.mtl', function(materials){
+				materials.preload();
+				
+				loader3.setMaterials(materials);
+				loader3.load(
+				'models/2.obj', //Baymax
+				function ( object ) {
+					var mesh = object;
+					mus.scene.add( mesh );
+					mesh.scale.set(0.05,0.05,0.05);
+					mesh.position.set(0, 0, 7);
+					mesh.rotation.y = Math.PI;
+					mus.objects.push(mesh);
+				},
+			);
+			});
+			
+			var dummy;
+			var mtlLoader3 = new THREE.MTLLoader();
+			mtlLoader3.setTexturePath('models/dummy/');
+			mtlLoader3.setPath('models/dummy/');
+			mtlLoader3.load('3.mtl', function(materials){
+				materials.preload();
+				
+				loader3.setMaterials(materials);
+				loader3.load(
+				'models/3.obj', //Dummy
+				function ( object ) {
+					var dummy = object;
+					mus.scene.add( dummy );
+					dummy.scale.set(0.015,0.015,0.015);
+					dummy.position.set(7, 0, 7);
+					dummy.rotation.y = Math.PI;
+					mus.objects.push(dummy);
+				},
+			);
+			});
+			
+			loader4.load(
+				'models/4.obj', //Toilet
+				function ( object ) {
+					var mesh = object;
+					mus.scene.add( mesh );
+					mesh.scale.set(0.05,0.05,0.05);
+					mesh.position.set(-7, 0, -7);
+					mus.objects.push(mesh);
+				},
+			);
+			loader5.load(
+				'models/5.obj', //Tree
+				function ( object ) {
+					var mesh = object;
+					mus.scene.add( mesh );
+					mesh.scale.set(0.0005,0.0005,0.0005);
+					mesh.position.set(0, 0, -7);
+					mus.objects.push(mesh);
+				},
+			);
+			loader6.load(
+				'models/6.obj', //Lightbulb
+				function ( object ) {
+					var mesh = object;
+					mus.scene.add( mesh );
+					mesh.scale.set(0.2,0.2,0.2);
+					mesh.position.set(7, 0, -7);
+					mus.objects.push(mesh);
+				},
+			);
+            
 
-
-			///////Add Artworks~///////
-
-			/*
-
+			
+			///////Add Artworks~//////
 			mus.artGroup = new THREE.Group();
 
-			mus.num_of_paintings = 30;
+			mus.num_of_paintings = 5;
 			mus.paintings = [];
 			for(var i = 0; i < mus.num_of_paintings; i++){
 				(function(index) {
@@ -357,6 +405,9 @@
 					var artwork = new Image();
 					var ratiow = 0;
 					var ratioh = 0;
+					
+					
+					popup.push(document.getElementById("myPopup" + i));
 
 					var source = './img/Artworks/' + (index).toString() + '.jpg';
 					artwork.src = source;
@@ -375,7 +426,7 @@
 						if(index <= Math.floor(mus.num_of_paintings/2)-1) //bottom half
 						{
 							//plane.rotation.z = Math.PI/2;
-                            plane.position.set(2.5 * index - 17.5,2,-2.96); //y and z kept constant
+                            plane.position.set(index,2,-2.96); //y and z kept constant
 						}
 						else
 						{
@@ -387,12 +438,13 @@
 						mus.scene.add(plane);
                         mus.paintings.push(plane);
 					}
-
+					//img.callback = function() { console.log( this.name ); }
 					img.map.needsUpdate = true; //ADDED
+					//img.callbacc = function() { console.log( this.name ); }
 				}(i))
 			}
 
-			*/
+			
 
 
 		},
@@ -432,61 +484,42 @@
 				mus.controls.getObject().translateY(mus.moveVelocity.y * delta);
 				mus.controls.getObject().translateZ(mus.moveVelocity.z * delta);
 
+				
+				//Player boundaries/////
 				if(mus.controls.getObject().position.y < 1.75) {
 						mus.jump = true;
 						mus.moveVelocity.y = 0;
 						mus.controls.getObject().position.y = 1.75;
 				}
-                if(mus.controls.getObject().position.z < -2) {
-                        mus.controls.getObject().position.z = -2;
+                if(mus.controls.getObject().position.z < -9) {
+                        mus.controls.getObject().position.z = -9;
                 }
-                if(mus.controls.getObject().position.z > 2) {
-                        mus.controls.getObject().position.z = 2;
+                if(mus.controls.getObject().position.z > 9) {
+                        mus.controls.getObject().position.z = 9;
                 }
-                if(mus.controls.getObject().position.x < -18) {
-                        mus.controls.getObject().position.x = -18;
+                if(mus.controls.getObject().position.x < -9) {
+                        mus.controls.getObject().position.x = -9;
                 }
-                if(mus.controls.getObject().position.x > 18) {
-                        mus.controls.getObject().position.x = 18;
+                if(mus.controls.getObject().position.x > 9) {
+                        mus.controls.getObject().position.x = 9;
                 }
 
                 //rayCaster/////
                 mus.raycaster.setFromCamera(mus.mouse.clone(), mus.camera);
                 //calculate objects interesting ray
-                mus.intersects = mus.raycaster.intersectObjects(mus.paintings);
+                mus.intersects = mus.raycaster.intersectObjects( mus.objects );
                 if(mus.intersects.length !== 0) {
-                    mus.intersects[0].object.material.color.set(0xaaeeee);
+                    //mus.intersects.object.material.color.set(0xaaeeee);
                     //console.log(intersects[0].distance);
-                    console.log(mus.intersects[0].point);
+                    console.log("dummy");
+					
+					//popup[mus.intersects.length].classList.toggle("show");
+					//---------------------------------------------------------------------------------------------------------------------------------------------------------
                 }
 
                 for(var i = 0; i < mus.wallGroup.children.length; i++) {
 
                     if(mus.user.BBox.isIntersectionBox(mus.wallGroup.children[i].BBox)){
-
-                        //refer to  forced positioning from above
-                        //if gets to a certain value, force value to that value?
-                        /*
-                        if(mus.controls.getObject().position.x > mus.pastX) { //collision on right side
-                            mus.controls.getObject().position.x = mus.pastX;
-                        }
-                        else if(mus.controls.getObject().position.x < mus.pastX) { //collision on left side
-                            mus.controls.getObject().position.x = mus.pastX;
-                        }
-                        if(mus.controls.getObject().position.z > mus.pastZ) { //collision from front
-                            mus.controls.getObject().position.z = mus.pastZ;
-                        }
-                        else if(mus.controls.getObject().position.z < mus.pastZ) {
-                            mus.controls.getObject().position.z = mus.pastZ;
-                        }
-                        */
-                        /*
-						mus.controls.getObject().position.x -= mus.pastX * delta * .9;
-						mus.controls.getObject().position.z -= mus.pastZ * delta * .9;
-
-						mus.moveVelocity.x = 0;
-						mus.moveVelocity.z = 0;
-                        */
                         mus.user.BBox.setFromObject(mus.user);
                     }
                     else {
@@ -523,5 +556,5 @@
 	mus.pointerControls();
 	mus.movement();
 	mus.create();
+	mus.click();
 	mus.render();
-
